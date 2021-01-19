@@ -1,13 +1,13 @@
 ﻿@page "/fetchdata"
 
-@using Paradise_Property_Scraper.Data
-@inject WeatherForecastService ForecastService
+@using ParadisePropertyScraper.Data
+@inject PropertyService PropertyService
 
 <h1>Weather forecast</h1>
 
 <p>This component demonstrates fetching data from a service.</p>
 
-@if (forecasts == null)
+@if (properties == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -16,20 +16,22 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>Address</th>
+                <th>Size (sqm)</th>
+                <th>Price</th>
+                <th>Rooms</th>
+                <th>Image</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var property in properties)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td><a href="http://fasteignir.visir.is/property/@property.Id">@property.StreetName  @property.StreetNumber</a></td>
+                    <td>@property.Size</td>
+                    <td>@property.Price</td>
+                    <td>@property.Rooms</td>
+                    <td><img src="@property.Image" alt="Alternate Text" /></td>
                 </tr>
             }
         </tbody>
@@ -37,10 +39,10 @@ else
 }
 
 @code {
-    private WeatherForecast[] forecasts;
+    private PropertyList properties;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        properties = await PropertyService.GetProperties("900");
     }
 }

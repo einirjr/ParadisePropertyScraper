@@ -5,11 +5,14 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using ParadisePropertyScraper.Data;
 
-namespace Paradise_Property_Scraper
+namespace ParadisePropertyScraper
 {
 	public class Program
 	{
