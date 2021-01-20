@@ -3,10 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>ParadisePropertyScraper</RootNamespace>
+    <UserSecretsId>2f21c89b-e2e4-496e-9405-ffb4de76229e</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.29" />
+    <PackageReference Include="MatBlazor" Version="2.8.0" />
+    <PackageReference Include="Microsoft.Azure.SignalR" Version="1.4.0" />
   </ItemGroup>
 
 </Project>

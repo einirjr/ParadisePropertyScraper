@@ -1,7 +1,57 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+@using ParadisePropertyScraper.Data
+@inject PropertyService PropertyService
 
-Welcome to your new app.
+<h1>Fasteignir í Eyjum</h1>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@if (properties == null)
+{
+    <p><em>Skíttu ekki í þig af spennu!</em></p>
+    <MatProgressBar Indeterminate="true"></MatProgressBar>
+}
+else
+{
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            @foreach (var property in properties)
+            {
+                <div class="mat-layout-grid-cell">
+                    <MatCard class="demo-mat-card">
+                        <MatCardContent>
+                            <MatCardMedia Wide="true" ImageUrl="@property.Image"></MatCardMedia>
+                            <div class="demo-mat-card-content">
+                                <MatHeadline6 class="demo-mat-card-clean-margin">
+                                    <a href="http://fasteignir.visir.is/property/@property.Id">@property.StreetName  @property.StreetNumber</a>
+                                </MatHeadline6>
+                                <MatSubtitle2 class="demo-mat-card-clean-margin"><i class="material-icons" style="vertical-align:bottom">house</i> @property.Size fermetrar</MatSubtitle2>
+                                <MatSubtitle2><i class="material-icons" style="vertical-align:bottom">money</i> @property.Price ISK </MatSubtitle2>
+                                <MatSubtitle2><i class="material-icons" style="vertical-align:bottom">meeting_room</i> @property.Rooms herbergi</MatSubtitle2>
+                            </div>
+                        </MatCardContent>
+                        <MatCardActions>
+                            <MatCardActionButtons>
+                                <MatButton>Read</MatButton>
+                                <MatButton>Bookmark</MatButton>
+                            </MatCardActionButtons>
+
+                            <MatCardActionIcons>
+                                <MatIconButton Icon="@MatIconNames.Favorite"></MatIconButton>
+                                <MatIconButton Icon="@MatIconNames.Dashboard"></MatIconButton>
+                            </MatCardActionIcons>
+                        </MatCardActions>
+                    </MatCard>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private PropertyList properties;
+
+    protected override async Task OnInitializedAsync()
+    {
+        properties = await PropertyService.GetProperties("900");
+    }
+}

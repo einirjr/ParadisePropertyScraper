@@ -4,6 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace ParadisePropertyScraper.Data
 {
+	/// <summary>
+	/// Data model class for Properties from the Json string
+	/// </summary>
 	public class Property
 	{
 		[JsonPropertyName("id")]
@@ -60,6 +63,9 @@ namespace ParadisePropertyScraper.Data
 
 	}
 
+	/// <summary>
+	/// Postal code information
+	/// </summary>
 	public class Zip
 	{
 		[JsonPropertyName("zip")]
@@ -69,6 +75,9 @@ namespace ParadisePropertyScraper.Data
 		public string Town { get; set; }
 	}
 
+	/// <summary>
+	/// Open house information on each property, not much used
+	/// </summary>
 	public class Openhouse
 	{
 		[JsonPropertyName("property")]
@@ -87,6 +96,9 @@ namespace ParadisePropertyScraper.Data
 		public object Description { get; set; }
 	}
 
+	/// <summary>
+	/// List of properties
+	/// </summary>
 	public class PropertyList : List<Property>
 	{
 	}
