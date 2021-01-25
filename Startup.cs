@@ -23,7 +23,8 @@ namespace ParadisePropertyScraper
 		{
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
-			services.AddSingleton<PropertyService>();
+			//services.AddSingleton<PropertyService>();
+			PropertyService.GetProperties();
 			services.AddMatBlazor();
 		}
 

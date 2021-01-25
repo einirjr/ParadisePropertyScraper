@@ -1,57 +1,114 @@
 ﻿@page "/"
 
 @using ParadisePropertyScraper.Data
-@inject PropertyService PropertyService
 
 <h1>Fasteignir í Eyjum</h1>
 
 @if (properties == null)
 {
-    <p><em>Skíttu ekki í þig af spennu!</em></p>
+    <p><em>Skíttiggíðig af spennu!</em></p>
     <MatProgressBar Indeterminate="true"></MatProgressBar>
 }
 else
 {
-    <div class="mat-layout-grid">
-        <div class="mat-layout-grid-inner">
-            @foreach (var property in properties)
-            {
-                <div class="mat-layout-grid-cell">
-                    <MatCard class="demo-mat-card">
-                        <MatCardContent>
-                            <MatCardMedia Wide="true" ImageUrl="@property.Image"></MatCardMedia>
-                            <div class="demo-mat-card-content">
-                                <MatHeadline6 class="demo-mat-card-clean-margin">
-                                    <a href="http://fasteignir.visir.is/property/@property.Id">@property.StreetName  @property.StreetNumber</a>
-                                </MatHeadline6>
-                                <MatSubtitle2 class="demo-mat-card-clean-margin"><i class="material-icons" style="vertical-align:bottom">house</i> @property.Size fermetrar</MatSubtitle2>
-                                <MatSubtitle2><i class="material-icons" style="vertical-align:bottom">money</i> @property.Price ISK </MatSubtitle2>
-                                <MatSubtitle2><i class="material-icons" style="vertical-align:bottom">meeting_room</i> @property.Rooms herbergi</MatSubtitle2>
-                            </div>
-                        </MatCardContent>
-                        <MatCardActions>
-                            <MatCardActionButtons>
-                                <MatButton>Read</MatButton>
-                                <MatButton>Bookmark</MatButton>
-                            </MatCardActionButtons>
-
-                            <MatCardActionIcons>
-                                <MatIconButton Icon="@MatIconNames.Favorite"></MatIconButton>
-                                <MatIconButton Icon="@MatIconNames.Dashboard"></MatIconButton>
-                            </MatCardActionIcons>
-                        </MatCardActions>
-                    </MatCard>
-                </div>
-            }
-        </div>
-    </div>
+    <RadzenRadioButtonList @bind-Value=@sortBy TValue="SortBy" Change=@((args) => OnChange(args))>
+        <Items>
+            <RadzenRadioButtonListItem Text="Heimilisfang" Value="SortBy.StreetName" />
+            <RadzenRadioButtonListItem Text="Verð" Value="SortBy.Price" />
+            <RadzenRadioButtonListItem Text="Stærð (fm)" Value="SortBy.Size" />
+            <RadzenRadioButtonListItem Text="Herbergi" Value="SortBy.Rooms" />
+            <RadzenRadioButtonListItem Text="Svefnherbergi" Value="SortBy.Bedrooms" />
+        </Items>
+    </RadzenRadioButtonList>
+    <RadzenSlider Range="true" @bind-Value=@values TValue="IEnumerable<int>" Change=@(args => OnChange(args)) Min="@MIN" Max="@MAX"/>
 }
+
+<div class="mat-layout-grid">
+    <div class="mat-layout-grid-inner">
+        @foreach (var property in properties)
+        {
+            <div class="mat-layout-grid-cell">
+                <MatCard class="demo-mat-card">
+                    <MatCardContent>
+                        <MatCardMedia Wide="true" ImageUrl="@property.Image"></MatCardMedia>
+                        <div class="demo-mat-card-content">
+                            <MatHeadline6 class="demo-mat-card-clean-margin">
+                                <a href="http://fasteignir.visir.is/property/@property.Id">@property.StreetName  @property.StreetNumber</a>
+                            </MatHeadline6>
+                            <MatSubtitle2 class="demo-mat-card-clean-margin"><i class="material-icons" style="vertical-align:bottom">house</i> @property.Size fermetrar</MatSubtitle2>
+                            <MatSubtitle2><i class="material-icons" style="vertical-align:bottom">money</i> @property.Price ISK </MatSubtitle2>
+                            <MatSubtitle2><i class="material-icons" style="vertical-align:bottom">meeting_room</i> @property.Rooms herbergi</MatSubtitle2>
+                        </div>
+                    </MatCardContent>
+                    <MatCardActions>
+                        <MatCardActionButtons>
+                            <MatButton>Read</MatButton>
+                            <MatButton>Bookmark</MatButton>
+                        </MatCardActionButtons>
+
+                        <MatCardActionIcons>
+                            <MatIconButton Icon="@MatIconNames.Favorite"></MatIconButton>
+                            <MatIconButton Icon="@MatIconNames.Dashboard"></MatIconButton>
+                        </MatCardActionIcons>
+                    </MatCardActions>
+                </MatCard>
+            </div>
+        }
+    </div>
+</div>
+        }
 
 @code {
     private PropertyList properties;
+    private SortBy sortBy;
+    private static int MIN = 0;
+    private static int MAX = 0;
+    private IEnumerable<int> values = new int[] { 0, 1 };
 
     protected override async Task OnInitializedAsync()
     {
-        properties = await PropertyService.GetProperties("900");
+        properties = PropertyService.Properties;
+        MIN = properties.Min(x => x.Price);
+        MAX = properties.Max(x => x.Price);
+        values = new int[] { MIN, MAX };
     }
+
+    private void OnChange(SortBy selectedProperty)
+    {
+        switch (selectedProperty)
+        {
+            case SortBy.StreetName:
+                properties.Sort((x, y) => x.StreetName.CompareTo(y.StreetName));
+                break;
+            case SortBy.Price:
+                properties.Sort((x, y) => x.Price.CompareTo(y.Price));
+                break;
+            case SortBy.Size:
+                properties.Sort((x, y) => x.Size.CompareTo(y.Size));
+                break;
+            case SortBy.Rooms:
+                properties.Sort((x, y) => x.Rooms.CompareTo(y.Rooms));
+                break;
+            case SortBy.Bedrooms:
+                properties.Sort((x, y) => x.Bedrooms.CompareTo(y.Bedrooms));
+                break;
+            default:
+                break;
+        }
+        this.StateHasChanged();
+    }
+
+    private void OnChange(IEnumerable<int> values)
+    {
+        // Todo: LOGIC PLEASE
+    }
+
+    private enum SortBy
+    {
+        StreetName,
+        Price,
+        Size,
+        Rooms,
+        Bedrooms
+    };
 }
